@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <string.h>
 
-#define RDTSC(U, L) asm ("rdtsc; mov %%edx, %0; mov %%eax, %1;":"=r"(U),"=r"(L)::"%edx", "%eax"); // ASM for reading TSC register
+#define RDTSC(U, L) asm volatile ("rdtsc; mov %%edx, %0; mov %%eax, %1;":"=r"(U),"=r"(L)::"%edx", "%eax"); // ASM for reading TSC register
 
 int main() {
     int u1, l1, u2, l2, pid;
