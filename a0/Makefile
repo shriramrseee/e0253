@@ -1,5 +1,5 @@
 CC=gcc
-ITER=5
+ITER=100
 MEM=104857600
 
 all: fork precious
