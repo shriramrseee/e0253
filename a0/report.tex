@@ -1,0 +1,80 @@
+\documentclass[12pt,letterpaper]{article}
+%\usepackage{fullpage}
+\usepackage[top=2cm, bottom=4.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+%\usepackage{lastpage}
+\usepackage{enumerate}
+\usepackage{fancyhdr}
+%\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+ 
+\renewcommand\lstlistingname{Algorithm}
+\renewcommand\lstlistlistingname{Algorithms}
+\def\lstlistingautorefname{Alg.}
+
+\lstdefinestyle{Python}{
+    language        = Python,
+    frame           = lines, 
+    basicstyle      = \footnotesize,
+    keywordstyle    = \color{blue},
+    stringstyle     = \color{green},
+    commentstyle    = \color{red}\ttfamily
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+% Edit these as appropriate
+
+\pagestyle{fancyplain}
+\headheight 35pt
+\lhead{E0 253 \\ Operating Systems}                 % <-- Comment this line out for problem sets (make sure you are person #1)
+\chead{\textbf{\Large Assignment-0}}
+\rhead{Shriram R. \\ 06-02-01-10-51-18-1-15763}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1.5em
+
+\begin{document}
+	
+	\section{System Call Implementation}
+	The \emph{my\_precious()} has been implemented by declaring the new call in \emph{include/linux/syscall.h} and defining inside \emph{kernel/sys.c}. Also, new entries were added to \emph{x86} architecture syscall tables (32 and 64 bit) with new syscall numbers and function mappings. A new entry was also added to \emph{kernel/sys\_ni.c} and \emph{unistd.h}.
+	
+	\section{Benchmark - Setup}
+	Benchmarks were run on a bare metal desktop consisting of Quad core Intel Core i5-6500T CPU clocked at 2.50GHz and 8GB RAM. The kernel was loaded within Ubuntu 18.04.1 OS. The benchmark code was compiled using GCC v7.4 and without optimization flags. Each benchmark was run in a loop of 100 iterations. The programs used for benchmark has 100MB allocated heap memory. The clock cycles were measured by reading TSC register (RDTSC instruction) using inline assembly code.
+		
+	\section{Benchmark - Analysis}
+	The following table provides the mean, median, min, max and standard deviation of clock cycles for \emph{fork()} and \emph{my\_precious()} system calls. \\
+	
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			\textbf{Call} & \textbf{Mean} & \textbf{Median} & \textbf{Min} & \textbf{Max} & \textbf{Std. Dev.} \\
+			\hline 
+			\emph{fork()} & 3218707 & 2372842 & 1611556 & 8150548 & 1636224 \\ 
+			\hline 
+			\emph{my\_precious()} & 650 & 628 & 622 & 2658 & 200 \\ 
+			\hline 
+		\end{tabular}		
+	\end{center}
+    
+    We can observe that \emph{fork()} takes about 3 orders of magnitude more cycles than \emph{my\_precious()}. The standard deviation for both calls is significant. This can be partially explained due to context switches during system call execution. For \emph{my\_precious()}, only the first iteration took more cycles and the rest showed negligible variance. This could be explained due to cache misses happening during the first invocation of the call. In general, median cycle counts should be taken as the representative value since it is not skewed significantly by outliers. 
+   	
+	\section{Reference}
+	\begin{enumerate}
+		\item https://kernelnewbies.org/KernelBuild
+		\item https://www.kernel.org/doc/html/v5.0/process/adding-syscalls.html
+		\item Intel 64 and IA-32 architectures software developer's manual - Instruction set reference
+	\end{enumerate}
+
+\end{document}
